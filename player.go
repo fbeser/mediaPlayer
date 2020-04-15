@@ -42,7 +42,7 @@ var (
 	defaultPlayerFullScreen bool
 )
 
-type media struct {
+type Media struct {
 	fileName string
 	writer   io.WriteCloser
 	reader   io.ReadCloser
@@ -77,15 +77,15 @@ func SetDefaultPlayerFullScreen(fs bool) {
 	defaultPlayerFullScreen = fs
 }
 
-func NewMedia(fileName string) *media {
-	return &media{fileName: fileName, vol: 100, player: defaultPlayer, osdLevel: defaultPlayerOSDLevel, fullScreen: defaultPlayerFullScreen}
+func NewMedia(fileName string) *Media {
+	return &Media{fileName: fileName, vol: 100, player: defaultPlayer, osdLevel: defaultPlayerOSDLevel, fullScreen: defaultPlayerFullScreen}
 }
 
-func (m *media) SetFileName(fileName string) {
+func (m *Media) SetFileName(fileName string) {
 	m.fileName = fileName
 }
 
-func (m *media) SetVolume(vol int) {
+func (m *Media) SetVolume(vol int) {
 	if vol > 100 {
 		vol = 100
 	}
@@ -96,62 +96,62 @@ func (m *media) SetVolume(vol int) {
 	}
 }
 
-func (m *media) SetPosition(second int) {
+func (m *Media) SetPosition(second int) {
 	m.pos = second
 }
 
-func (m *media) SetRotate(orient int) {
+func (m *Media) SetRotate(orient int) {
 	m.rotate = orient
 }
 
-func (m *media) SetRepeat(repeat bool) {
+func (m *Media) SetRepeat(repeat bool) {
 	m.repeat = repeat
 }
 
-func (m *media) SetPlayer(player int) {
+func (m *Media) SetPlayer(player int) {
 	if player > 1 {
 		return
 	}
 	m.player = player
 }
 
-func (m *media) SetFullScreen(fs bool) {
+func (m *Media) SetFullScreen(fs bool) {
 	m.fullScreen = fs
 }
 
-func (m *media) SetOSDLevel(osdLevel int) {
+func (m *Media) SetOSDLevel(osdLevel int) {
 	m.osdLevel = osdLevel
 }
 
-func (m *media) SetExtraCmd(cmd []string) {
+func (m *Media) SetExtraCmd(cmd []string) {
 	m.extraCmd = cmd
 }
 
-func (m *media) PlayerStdout() io.ReadCloser {
+func (m *Media) PlayerStdout() io.ReadCloser {
 	return m.reader
 }
 
-func (m *media) Play() error {
+func (m *Media) Play() error {
 	return m.play()
 }
 
-func (m *media) Pause() error {
+func (m *Media) Pause() error {
 	return m.pause()
 }
 
-func (m *media) Stop() error {
+func (m *Media) Stop() error {
 	return m.stop()
 }
 
-func (m *media) Mute() {
+func (m *Media) Mute() {
 	go m.mute()
 }
 
-func (m *media) Unmute() {
+func (m *Media) Unmute() {
 	go m.unmute()
 }
 
-func (m *media) open() error {
+func (m *Media) open() error {
 	args := []string{}
 	switch m.player {
 
@@ -231,7 +231,7 @@ func (m *media) open() error {
 	return nil
 }
 
-func (m *media) play() error {
+func (m *Media) play() error {
 	if m.fileName == "" {
 		return errors.New("Filename is empty.")
 	}
@@ -252,7 +252,7 @@ func (m *media) play() error {
 	return nil
 }
 
-func (m *media) pause() error {
+func (m *Media) pause() error {
 	if m.IsOpen && m.IsPlay {
 		if _, err := m.writer.Write([]byte{KeySpace}); err != nil {
 			return err
@@ -262,7 +262,7 @@ func (m *media) pause() error {
 	return nil
 }
 
-func (m *media) stop() error {
+func (m *Media) stop() error {
 	if m.IsOpen {
 		if _, err := m.writer.Write([]byte{KeyQ}); err != nil {
 			return err
@@ -273,7 +273,7 @@ func (m *media) stop() error {
 	return nil
 }
 
-func (m *media) setTargetVolume(targetVol int) error {
+func (m *Media) setTargetVolume(targetVol int) error {
 	if !m.IsOpen || m.vol == targetVol {
 		return nil
 	}
@@ -319,7 +319,7 @@ func (m *media) setTargetVolume(targetVol int) error {
 	return nil
 }
 
-func (m *media) mute() error {
+func (m *Media) mute() error {
 	if !m.IsOpen && m.IsMute {
 		return nil
 	}
@@ -340,7 +340,7 @@ func (m *media) mute() error {
 	return nil
 }
 
-func (m *media) unmute() error {
+func (m *Media) unmute() error {
 	if !m.IsOpen && !m.IsMute {
 		return nil
 	}
