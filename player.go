@@ -44,6 +44,7 @@ var (
 
 type Media struct {
 	fileName string
+	cmd      *exec.Cmd
 	writer   io.WriteCloser
 	reader   io.ReadCloser
 	IsOpen   bool
@@ -218,15 +219,17 @@ func (m *Media) open() error {
 		return err
 	}
 
+	m.IsOpen = true
+	m.IsPlay = true
+
 	m.writer = cmdWriter
 	m.reader = cmdReader
+	m.cmd = cmd
 	go func() {
 		cmd.Wait()
 		m.IsOpen = false
 		m.IsPlay = false
 	}()
-	m.IsOpen = true
-	m.IsPlay = true
 
 	return nil
 }
@@ -267,6 +270,7 @@ func (m *Media) stop() error {
 		if _, err := m.writer.Write([]byte{KeyQ}); err != nil {
 			return err
 		}
+		m.cmd.Process.Kill()
 		m.IsOpen = false
 		m.IsPlay = false
 	}
