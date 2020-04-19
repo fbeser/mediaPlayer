@@ -203,6 +203,10 @@ func (m *Media) open() error {
 			args = append(args, "-l")
 			args = append(args, strconv.Itoa(m.pos))
 		}
+		if m.fullScreen {
+			args = append(args, "--aspect-mode")
+			args = append(args, "stretch")
+		}
 	}
 	args = append(args, m.extraCmd...)
 	args = append(args, m.fileName)
